@@ -12,34 +12,34 @@
 
 
 
-# 安装方式
+# Способы установки
 
-## 使用 HACS 安装
+## Установка с помощью HACS
 
 [![打开 Home Assistant 并打开 HACS商店内的存储库。](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=xswxm&repository=[home-assistant-wallecube](https://github.com/xswxm/home-assistant-wallecube)&category=integration)
 
-## 手动安装
+## Ручная установка
 
-将 `custom_components` 下的 `wallecube` 文件夹到 Home Assistant 中的`custom_components` 目录，并手动重启 Home Assistant。
+Перенесите папку `wallecube` из каталога `custom_components` в каталог `custom_components` в Home Assistant и вручную перезапустите Home Assistant.
 
 # 设置
 
 [![打开 Home Assistant 并设置新的集成。](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=wallecube)
 
-> [!CAUTION]
+> [!Внимание]
 > 
-> 如果您无法使用上面的按钮，请按照以下步骤操作：
+> Если вы не можете воспользоваться кнопкой выше, пожалуйста, выполните следующие действия：
 > 
-> 1. 导航到 Home Assistant 集成页面（设置 --> 设备和服务）
-> 2. 单击右下角的 `+ 添加集成` 按钮
-> 3. 搜索 `wallecube`
+> 1. Перейдите на страницу интеграции Home Assistant (Настройки - > Устройства и службы).
+> 2. Нажмите кнопку `+ Добавить интеграцию` в правом нижнем углу
+> 3. Введите в строке поиска `wallecube`
 
-> [!NOTE]
+> [!Примечание]
 > 
-> 1. 设备IMEI 填写获取到的MQTT用户名
-> 2. 设备密钥 填写获取到的MQTT密码
+> 1. IMEI устройства. Введите полученное имя пользователя MQTT
+> 2. Ключ устройства. Введите полученный пароль MQTT
 
 
 # 拓展衍生
 
-因为集成依赖互联网连接，如果需要本地化，也有很多办法。比如可以将官方mqtt服务器地址本地解析到自己的mqtt服务器，然后再转发给官方服务器，这样就既可以本地化，又可以保留原有的功能。
+Поскольку интеграция зависит от подключения к интернету, существует множество способов локализовать приложение. Например, можно перенаправить адрес официального сервера mqtt на собственный сервер mqtt, а затем на официальный сервер. Таким образом, вы можете добиться локализации, сохранив при этом исходную функциональность.
