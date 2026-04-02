@@ -26,7 +26,7 @@
 
 [![Откройте Home Assistant и настройте новую интеграцию.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=wallecube)
 
-> [!ВНИМАНИЕ]
+> [!CAUTION]
 > 
 > Если вы не можете воспользоваться кнопкой выше, пожалуйста, выполните следующие действия：
 > 
