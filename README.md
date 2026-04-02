@@ -1,4 +1,4 @@
-# 瓦力盒子 (WalleCube) UPS Home Assistant 集成
+# Интеграция Home Assistant для ИБП WalleCube
 
 Для получения актуальной информации о состоянии ИБП необходимо подписаться на официальный сервер MQTT.
 
@@ -16,15 +16,15 @@
 
 ## Установка с помощью HACS
 
-[![打开 Home Assistant 并打开 HACS商店内的存储库。](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=xswxm&repository=[home-assistant-wallecube](https://github.com/xswxm/home-assistant-wallecube)&category=integration)
+[![Откройте Home Assistant и откройте репозиторий в магазине HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=xswxm&repository=[home-assistant-wallecube](https://github.com/xswxm/home-assistant-wallecube)&category=integration)
 
 ## Ручная установка
 
 Перенесите папку `wallecube` из каталога `custom_components` в каталог `custom_components` в Home Assistant и вручную перезапустите Home Assistant.
 
-# 设置
+# Установка и настройка
 
-[![打开 Home Assistant 并设置新的集成。](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=wallecube)
+[![Откройте Home Assistant и настройте новую интеграцию.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=wallecube)
 
 > [!Внимание]
 > 
