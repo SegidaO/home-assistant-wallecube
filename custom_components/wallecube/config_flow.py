@@ -87,7 +87,13 @@ class WalleCubeConfigFlow(ConfigFlow, domain=DOMAIN):
                 loop.call_soon_threadsafe(event.set)
 
         client_id = f"{username}_{int(time.time())}"
-        client = MQTTClient(client_id)
+
+        # ✔ paho-mqtt 2.0+ requires callback_api_version=5
+        client = MQTTClient(
+            client_id=client_id,
+            callback_api_version=5
+        )
+
         client.username_pw_set(username, password)
         client.on_connect = on_connect
         client.on_disconnect = on_disconnect
