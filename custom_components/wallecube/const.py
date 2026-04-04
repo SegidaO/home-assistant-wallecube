@@ -19,6 +19,9 @@ from homeassistant.const import (
 DOMAIN: Final = "wallecube"
 DEVICE_MODEL: Final = "W120"
 MANUFACTURER: Final = "WalleCube"
+# MQTT settings for credential verification in config_flow
+MQTT_BROKER: Final = "mqtt.wlups.com"  # or IP of your UPS
+MQTT_PORT: Final = 1883
 
 PLATFORMS: Final = [
     Platform.SENSOR,
