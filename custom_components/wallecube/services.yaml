@@ -1,10 +1,12 @@
 send_magic_packet:
-  name: WOL
-  description: Wake up a device that supports WOL in the same local network as the UPS by entering the MAC address.
+  name: Send Magic Packet (WOL)
+  description: >
+    Wake up a device in the same local network as the UPS by sending a WOL magic packet.
   fields:
     mac_address:
       name: Device MAC Address
-      description: MAC address of the device that supports WOL, such as 11:22:33:44:55:66.
+      description: >
+        MAC address of the target device, for example: 11:22:33:44:55:66.
       required: true
       selector:
         text:
