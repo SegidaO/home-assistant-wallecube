@@ -1,23 +1,83 @@
 {
+  "title": "WalleCube UPS",
   "config": {
     "step": {
       "user": {
-        "title": "Configure WalleCube UPS",
+        "title": "Connect WalleCube UPS",
+        "description": "Enter the device ID and password to connect your WalleCube.",
         "data": {
-          "device_id": "IMEI",
+          "device_id": "Device ID",
           "password": "Password"
         }
+      }
+    },
+    "error": {
+      "auth_failed": "MQTT authentication failed",
+      "error_code_1": "Invalid username or password",
+      "error_code_2": "MQTT broker rejected the connection",
+      "error_code_3": "Network error",
+      "error_code_4": "Connection timeout",
+      "unknown": "Unknown error"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "totalConsumption": {
+        "name": "Total Consumption"
+      },
+      "leftSecs": {
+        "name": "Remaining Runtime"
+      },
+      "batteryCapacity": {
+        "name": "Battery Level"
+      },
+      "currentOut": {
+        "name": "Output Current"
+      },
+      "voltageOut": {
+        "name": "Output Voltage"
+      },
+      "pwrOut": {
+        "name": "Output Power"
+      },
+      "chargingCurrent": {
+        "name": "Charging Current"
+      },
+      "batteryVoltage": {
+        "name": "Battery Voltage"
+      },
+      "currentInput": {
+        "name": "Input Current"
+      },
+      "voltageInput": {
+        "name": "Input Voltage"
+      },
+      "batteryTemperature": {
+        "name": "Battery Temperature"
+      },
+      "ipAddress": {
+        "name": "IP Address"
+      }
+    },
+    "binary_sensor": {
+      "acOK": {
+        "name": "AC Adapter Status"
+      },
+      "charging": {
+        "name": "Charging Status"
       }
     }
   },
   "services": {
     "send_magic_packet": {
-      "name": "Remote Wake-up",
-      "description": "Wake up a device that supports WOL in the same local network as the UPS by entering the MAC address."
-    },
-    "mac_address": {
-      "name": "Device MAC Address",
-      "description": "MAC address of the device that supports WOL, such as 11:22:33:44:55:66."
+      "name": "Send Magic Packet (WOL)",
+      "description": "Wake up a device in the local network by sending a WOL magic packet.",
+      "fields": {
+        "mac_address": {
+          "name": "Device MAC Address",
+          "description": "Example: 11:22:33:44:55:66"
+        }
+      }
     }
   }
 }
