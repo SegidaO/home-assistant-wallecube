@@ -2,7 +2,11 @@ import logging
 import asyncio
 import voluptuous as vol
 
-from homeassistant.config_entries import ConfigFlow, OptionsFlow, CONF_DEVICE_ID, CONF_PASSWORD
+from homeassistant.config_entries import ConfigFlow, OptionsFlow
+from homeassistant.const import (
+    CONF_DEVICE_ID,
+    CONF_PASSWORD,
+)
 from homeassistant.core import callback
 from homeassistant.components import mqtt
 from homeassistant.helpers.dispatcher import async_dispatcher_send
