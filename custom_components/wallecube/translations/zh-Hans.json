@@ -1,23 +1,83 @@
 {
+  "title": "WalleCube UPS",
   "config": {
     "step": {
       "user": {
-        "title": "设置瓦力盒子 UPS",
+        "title": "连接 WalleCube UPS",
+        "description": "请输入设备 ID 和密码以连接您的 WalleCube。",
         "data": {
-          "device_id": "设备IMEI",
-          "password": "设备密钥"
+          "device_id": "设备 ID",
+          "password": "密码"
         }
+      }
+    },
+    "error": {
+      "auth_failed": "MQTT 身份验证失败",
+      "error_code_1": "用户名或密码错误",
+      "error_code_2": "MQTT 服务器拒绝连接",
+      "error_code_3": "网络错误",
+      "error_code_4": "连接超时",
+      "unknown": "未知错误"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "totalConsumption": {
+        "name": "总耗电量"
+      },
+      "leftSecs": {
+        "name": "剩余运行时间"
+      },
+      "batteryCapacity": {
+        "name": "电池电量"
+      },
+      "currentOut": {
+        "name": "输出电流"
+      },
+      "voltageOut": {
+        "name": "输出电压"
+      },
+      "pwrOut": {
+        "name": "输出功率"
+      },
+      "chargingCurrent": {
+        "name": "充电电流"
+      },
+      "batteryVoltage": {
+        "name": "电池电压"
+      },
+      "currentInput": {
+        "name": "输入电流"
+      },
+      "voltageInput": {
+        "name": "输入电压"
+      },
+      "batteryTemperature": {
+        "name": "电池温度"
+      },
+      "ipAddress": {
+        "name": "IP 地址"
+      }
+    },
+    "binary_sensor": {
+      "acOK": {
+        "name": "电源适配器状态"
+      },
+      "charging": {
+        "name": "充电状态"
       }
     }
   },
   "services": {
     "send_magic_packet": {
-      "name": "远程开机",
-      "description": "输入和UPS相同局域网内且支持WOL的设备的MAC地址实现远程开机"
-    },
-    "mac_address": {
-      "name": "设备MAC地址",
-      "description": "支持WOL唤醒的设备MAC地址，如 11:22:33:44:55:66。"
+      "name": "发送 Magic Packet (WOL)",
+      "description": "通过发送 WOL 魔术包唤醒局域网中的设备。",
+      "fields": {
+        "mac_address": {
+          "name": "设备 MAC 地址",
+          "description": "例如：11:22:33:44:55:66"
+        }
+      }
     }
   }
 }
