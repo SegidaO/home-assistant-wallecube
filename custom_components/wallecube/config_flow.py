@@ -3,6 +3,7 @@ import logging
 import time
 import voluptuous as vol
 
+from homeassistant.core import callback
 from homeassistant.config_entries import ConfigFlow, OptionsFlow
 from homeassistant.const import CONF_DEVICE_ID, CONF_PASSWORD
 
