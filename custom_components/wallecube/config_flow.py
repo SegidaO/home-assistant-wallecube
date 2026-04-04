@@ -1,13 +1,13 @@
-from homeassistant.config_entries import ConfigFlow, OptionsFlow, CONF_DEVICE_ID, CONF_PASSWORD
-from homeassistant.core import callback
-from homeassistant.const import CONF_HOST, CONF_PORT
+import logging
+import asyncio
 import voluptuous as vol
 
-import asyncio
-import logging
+from homeassistant.config_entries import ConfigFlow, OptionsFlow, CONF_DEVICE_ID, CONF_PASSWORD
+from homeassistant.core import callback
+from homeassistant.components import mqtt
+from homeassistant.helpers.dispatcher import async_dispatcher_send
 
-from paho.mqtt.client import Client as MQTTClient, CONNACK_ACCEPTED
-from .const import DOMAIN, MQTT_BROKER, MQTT_PORT
+from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 class WalleCubeConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for WalleCube."""
 
-    VERSION = 1
+    VERSION = 2
 
     async def async_step_user(self, user_input=None):
         """Handle the initial step."""
@@ -26,15 +26,16 @@ class WalleCubeConfigFlow(ConfigFlow, domain=DOMAIN):
             password = user_input[CONF_PASSWORD]
 
             result = await self._verify_mqtt_credentials(device_id, password)
-            if result['success']:
+
+            if result["success"]:
                 _LOGGER.debug("MQTT verification successful")
                 return self.async_create_entry(
                     title=f"WalleCube {device_id}",
                     data=user_input
                 )
             else:
-                errors["base"] = f"error_code_{result['error_code']}"
-                _LOGGER.warning("MQTT verification failed: %s", result['error_message'])
+                errors["base"] = result["error"]
+                _LOGGER.warning("MQTT verification failed: %s", result["message"])
 
         return self.async_show_form(
             step_id="user",
@@ -55,52 +56,61 @@ class WalleCubeConfigFlow(ConfigFlow, domain=DOMAIN):
         """Get the options flow for this handler."""
         return WalleCubeOptionsFlow(config_entry)
 
-    async def _verify_mqtt_credentials(self, username, password, timeout=30):
-        """Verify MQTT credentials asynchronously."""
-        result = {"success": False, "error_code": None, "error_message": ""}
+    async def _verify_mqtt_credentials(self, username: str, password: str, timeout: int = 10):
+        """
+        Проверка MQTT-доступа через встроенную интеграцию Home Assistant.
 
-        loop = asyncio.get_event_loop()
+        Механизм:
+        1. Подписываемся на временный топик.
+        2. Публикуем тестовое сообщение с указанными username/password.
+        3. Если брокер принимает — сообщение вернётся.
+        4. Если нет — будет timeout.
+        """
+
+        test_topic = f"wallecube/test/{username}"
+        test_payload = f"auth_test:{username}:{password}"
+
         event = asyncio.Event()
+        result = {"success": False, "error": "auth_failed", "message": ""}
 
-        def on_connect(client, userdata, flags, rc):
-            if rc == CONNACK_ACCEPTED:
+        @callback
+        def _on_message(msg):
+            if msg.payload.decode() == test_payload:
                 result["success"] = True
-                result["error_message"] = "Connection successful"
-            else:
-                result["error_code"] = rc
-                result["error_message"] = f"Connection failed, error code: {rc} (possible username/password error)"
-            loop.call_soon_threadsafe(event.set)
+                result["error"] = None
+                result["message"] = "MQTT authentication OK"
+                event.set()
 
-        def on_disconnect(client, userdata, rc):
-            if rc != 0:
-                result["error_code"] = rc
-                result["error_message"] = f"Disconnected unexpectedly, error code: {rc}"
-                loop.call_soon_threadsafe(event.set)
-
-        client_id = f'{username}_{int(time.time())}'
-        client = MQTTClient(client_id)
-        client.username_pw_set(username, password)
-        client.on_connect = on_connect
-        client.on_disconnect = on_disconnect
+        # Подписка
+        unsub = await mqtt.async_subscribe(
+            self.hass,
+            test_topic,
+            _on_message,
+            qos=0
+        )
 
         try:
-            client.loop_start()
-            client.connect_async(MQTT_BROKER, MQTT_PORT)
+            # Публикация
+            await mqtt.async_publish(
+                self.hass,
+                test_topic,
+                test_payload,
+                qos=0,
+                retain=False,
+                username=username,
+                password=password,
+            )
 
             await asyncio.wait_for(event.wait(), timeout=timeout)
 
         except asyncio.TimeoutError:
-            result["success"] = False
-            result["error_message"] = "Connection timeout, possible network issue or incorrect credentials"
+            result["message"] = "MQTT authentication timeout"
         except Exception as e:
-            result["success"] = False
-            result["error_message"] = f"Unexpected error: {str(e)}"
+            result["message"] = f"Unexpected error: {e}"
         finally:
-            client.loop_stop()
-            client.disconnect()
+            unsub()
 
         return result
-
 
 
 class WalleCubeOptionsFlow(OptionsFlow):
