@@ -1,17 +1,14 @@
-import logging
 import asyncio
+import logging
+import time
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigFlow, OptionsFlow
-from homeassistant.const import (
-    CONF_DEVICE_ID,
-    CONF_PASSWORD,
-)
-from homeassistant.core import callback
-from homeassistant.components import mqtt
-from homeassistant.helpers.dispatcher import async_dispatcher_send
+from homeassistant.const import CONF_DEVICE_ID, CONF_PASSWORD
 
-from .const import DOMAIN
+from paho.mqtt.client import Client as MQTTClient, CONNACK_ACCEPTED
+
+from .const import DOMAIN, MQTT_BROKER, MQTT_PORT
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -62,57 +59,55 @@ class WalleCubeConfigFlow(ConfigFlow, domain=DOMAIN):
 
     async def _verify_mqtt_credentials(self, username: str, password: str, timeout: int = 10):
         """
-        Проверка MQTT-доступа через встроенную интеграцию Home Assistant.
-
-        Механизм:
-        1. Подписываемся на временный топик.
-        2. Публикуем тестовое сообщение с указанными username/password.
-        3. Если брокер принимает — сообщение вернётся.
-        4. Если нет — будет timeout.
+        Проверка MQTT логина/пароля через paho-mqtt.
+        Это разрешено, так как config_flow выполняется один раз и не создаёт постоянных потоков.
         """
 
-        test_topic = f"wallecube/test/{username}"
-        test_payload = f"auth_test:{username}:{password}"
-
-        event = asyncio.Event()
         result = {"success": False, "error": "auth_failed", "message": ""}
+        event = asyncio.Event()
 
-        @callback
-        def _on_message(msg):
-            if msg.payload.decode() == test_payload:
+        loop = asyncio.get_running_loop()
+
+        def on_connect(client, userdata, flags, rc):
+            if rc == CONNACK_ACCEPTED:
                 result["success"] = True
                 result["error"] = None
                 result["message"] = "MQTT authentication OK"
-                event.set()
+            else:
+                result["error"] = f"error_code_{rc}"
+                result["message"] = f"MQTT connection failed, code {rc}"
 
-        # Подписка
-        unsub = await mqtt.async_subscribe(
-            self.hass,
-            test_topic,
-            _on_message,
-            qos=0
-        )
+            loop.call_soon_threadsafe(event.set)
+
+        def on_disconnect(client, userdata, rc):
+            if rc != 0:
+                result["error"] = f"error_code_{rc}"
+                result["message"] = f"Disconnected unexpectedly, code {rc}"
+                loop.call_soon_threadsafe(event.set)
+
+        client_id = f"{username}_{int(time.time())}"
+        client = MQTTClient(client_id)
+        client.username_pw_set(username, password)
+        client.on_connect = on_connect
+        client.on_disconnect = on_disconnect
 
         try:
-            # Публикация
-            await mqtt.async_publish(
-                self.hass,
-                test_topic,
-                test_payload,
-                qos=0,
-                retain=False,
-                username=username,
-                password=password,
-            )
+            client.connect_async(MQTT_BROKER, MQTT_PORT)
+            client.loop_start()
 
             await asyncio.wait_for(event.wait(), timeout=timeout)
 
         except asyncio.TimeoutError:
+            result["success"] = False
+            result["error"] = "timeout"
             result["message"] = "MQTT authentication timeout"
         except Exception as e:
+            result["success"] = False
+            result["error"] = "unexpected"
             result["message"] = f"Unexpected error: {e}"
         finally:
-            unsub()
+            client.loop_stop()
+            client.disconnect()
 
         return result
 
@@ -121,11 +116,9 @@ class WalleCubeOptionsFlow(OptionsFlow):
     """WalleCube options flow."""
 
     def __init__(self, config_entry):
-        """Initialize options flow."""
         self.config_entry = config_entry
 
     async def async_step_init(self, user_input=None):
-        """Manage the options."""
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
