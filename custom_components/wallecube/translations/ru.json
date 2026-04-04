@@ -1,0 +1,83 @@
+{
+  "title": "WalleCube UPS",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Подключение WalleCube UPS",
+        "description": "Введите идентификатор устройства и пароль для подключения к вашему WalleCube.",
+        "data": {
+          "device_id": "ID устройства",
+          "password": "Пароль"
+        }
+      }
+    },
+    "error": {
+      "auth_failed": "Ошибка авторизации MQTT",
+      "error_code_1": "Неверный логин или пароль",
+      "error_code_2": "Брокер отклонил подключение",
+      "error_code_3": "Сетевая ошибка",
+      "error_code_4": "Время ожидания истекло",
+      "unknown": "Неизвестная ошибка"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "totalConsumption": {
+        "name": "Общее потребление"
+      },
+      "leftSecs": {
+        "name": "Оставшееся время работы"
+      },
+      "batteryCapacity": {
+        "name": "Уровень заряда батареи"
+      },
+      "currentOut": {
+        "name": "Выходной ток"
+      },
+      "voltageOut": {
+        "name": "Выходное напряжение"
+      },
+      "pwrOut": {
+        "name": "Выходная мощность"
+      },
+      "chargingCurrent": {
+        "name": "Ток зарядки"
+      },
+      "batteryVoltage": {
+        "name": "Напряжение батареи"
+      },
+      "currentInput": {
+        "name": "Входной ток"
+      },
+      "voltageInput": {
+        "name": "Входное напряжение"
+      },
+      "batteryTemperature": {
+        "name": "Температура батареи"
+      },
+      "ipAddress": {
+        "name": "IP‑адрес"
+      }
+    },
+    "binary_sensor": {
+      "acOK": {
+        "name": "Состояние адаптера питания"
+      },
+      "charging": {
+        "name": "Состояние зарядки"
+      }
+    }
+  },
+  "services": {
+    "send_magic_packet": {
+      "name": "Отправить Magic Packet (WOL)",
+      "description": "Разбудить устройство в локальной сети, отправив WOL‑пакет.",
+      "fields": {
+        "mac_address": {
+          "name": "MAC‑адрес устройства",
+          "description": "Например: 11:22:33:44:55:66"
+        }
+      }
+    }
+  }
+}
