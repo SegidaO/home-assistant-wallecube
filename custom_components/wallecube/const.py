@@ -1,10 +1,9 @@
+from typing import Final
+
 from homeassistant.const import Platform
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorStateClass,
-)
-from homeassistant.components.binary_sensor import (
-    BinarySensorDeviceClass,
 )
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.const import (
@@ -17,36 +16,30 @@ from homeassistant.const import (
     UnitOfTemperature,
 )
 
-from typing import Final
-from enum import StrEnum
-
 DOMAIN: Final = "wallecube"
 DEVICE_MODEL: Final = "W120"
 MANUFACTURER: Final = "WalleCube"
-MQTT_BROKER: Final = "mqtt.wlups.com"
-MQTT_PORT: Final = 1883
-MQTT_KEEPALIVE: Final = 120
 
 PLATFORMS: Final = [
     Platform.SENSOR,
-    Platform.BINARY_SENSOR
+    Platform.BINARY_SENSOR,
 ]
 
 BINARY_SENSOR_TYPES = {
     "acOK": {
         "name": "AC适配器状态",
         "device_class": BinarySensorDeviceClass.POWER,
-        "icon_on": 'mdi:power-plug',
-        "icon_off": 'mdi:power-plug-off',
+        "icon_on": "mdi:power-plug",
+        "icon_off": "mdi:power-plug-off",
         "index": 1,
     },
     "charging": {
         "name": "充电状态",
         "device_class": BinarySensorDeviceClass.BATTERY_CHARGING,
-        "icon_on": 'mdi:battery-charging',
-        "icon_off": 'mdi:battery',
+        "icon_on": "mdi:battery-charging",
+        "icon_off": "mdi:battery",
         "index": 1,
-    }
+    },
 }
 
 SENSOR_TYPES = {
@@ -55,7 +48,7 @@ SENSOR_TYPES = {
         "device_class": SensorDeviceClass.ENERGY,
         "state_class": SensorStateClass.MEASUREMENT,
         "unit": UnitOfEnergy.KILO_WATT_HOUR,
-        "icon": 'mdi:lightning-bolt-circle',
+        "icon": "mdi:lightning-bolt-circle",
         "index": 1,
     },
     "leftSecs": {
@@ -63,7 +56,7 @@ SENSOR_TYPES = {
         "device_class": SensorDeviceClass.DURATION,
         "state_class": SensorStateClass.MEASUREMENT,
         "unit": UnitOfTime.MINUTES,
-        "icon": 'mdi:battery-clock',
+        "icon": "mdi:battery-clock",
         "index": 1,
     },
     "batteryCapacity": {
@@ -71,7 +64,7 @@ SENSOR_TYPES = {
         "device_class": SensorDeviceClass.BATTERY,
         "state_class": SensorStateClass.MEASUREMENT,
         "unit": PERCENTAGE,
-        "icon": 'mdi:battery',
+        "icon": "mdi:battery",
         "index": 1,
     },
     "currentOut": {
@@ -79,7 +72,7 @@ SENSOR_TYPES = {
         "device_class": SensorDeviceClass.CURRENT,
         "state_class": SensorStateClass.MEASUREMENT,
         "unit": UnitOfElectricCurrent.AMPERE,
-        "icon": 'mdi:alpha-a-circle',
+        "icon": "mdi:alpha-a-circle",
         "index": 1,
     },
     "voltageOut": {
@@ -87,7 +80,7 @@ SENSOR_TYPES = {
         "device_class": SensorDeviceClass.VOLTAGE,
         "state_class": SensorStateClass.MEASUREMENT,
         "unit": UnitOfElectricPotential.VOLT,
-        "icon": 'mdi:alpha-v-circle',
+        "icon": "mdi:alpha-v-circle",
         "index": 1,
     },
     "pwrOut": {
@@ -95,7 +88,7 @@ SENSOR_TYPES = {
         "device_class": SensorDeviceClass.POWER,
         "state_class": SensorStateClass.MEASUREMENT,
         "unit": UnitOfPower.WATT,
-        "icon": 'mdi:alpha-p-circle',
+        "icon": "mdi:alpha-p-circle",
         "index": 1,
     },
     "chargingCurrent": {
@@ -103,7 +96,7 @@ SENSOR_TYPES = {
         "device_class": SensorDeviceClass.CURRENT,
         "state_class": SensorStateClass.MEASUREMENT,
         "unit": UnitOfElectricCurrent.AMPERE,
-        "icon": 'mdi:current-dc',
+        "icon": "mdi:current-dc",
         "index": 1,
     },
     "batteryVoltage": {
@@ -111,7 +104,7 @@ SENSOR_TYPES = {
         "device_class": SensorDeviceClass.VOLTAGE,
         "state_class": SensorStateClass.MEASUREMENT,
         "unit": UnitOfElectricPotential.VOLT,
-        "icon": 'mdi:alpha-v-circle',
+        "icon": "mdi:alpha-v-circle",
         "index": 1,
     },
     "currentInput": {
@@ -119,7 +112,7 @@ SENSOR_TYPES = {
         "device_class": SensorDeviceClass.CURRENT,
         "state_class": SensorStateClass.MEASUREMENT,
         "unit": UnitOfElectricCurrent.AMPERE,
-        "icon": 'mdi:alpha-a-circle',
+        "icon": "mdi:alpha-a-circle",
         "index": 1,
     },
     "voltageInput": {
@@ -127,7 +120,7 @@ SENSOR_TYPES = {
         "device_class": SensorDeviceClass.VOLTAGE,
         "state_class": SensorStateClass.MEASUREMENT,
         "unit": UnitOfElectricPotential.VOLT,
-        "icon": 'mdi:alpha-v-circle',
+        "icon": "mdi:alpha-v-circle",
         "index": 1,
     },
     "batteryTemperature": {
@@ -135,15 +128,15 @@ SENSOR_TYPES = {
         "device_class": SensorDeviceClass.TEMPERATURE,
         "state_class": SensorStateClass.MEASUREMENT,
         "unit": UnitOfTemperature.CELSIUS,
-        "icon": 'mdi:alpha-a-circle',
+        "icon": "mdi:alpha-a-circle",
         "index": 1,
     },
     "ipAddress": {
         "name": "IP地址",
-        "device_class": SensorDeviceClass.VOLTAGE,
+        "device_class": None,
         "state_class": SensorStateClass.MEASUREMENT,
         "unit": "",
-        "icon": 'mdi:ip',
+        "icon": "mdi:ip",
         "index": 1,
     },
 }
