@@ -65,7 +65,7 @@ class WalleCubeConfigFlow(ConfigFlow, domain=DOMAIN):
     async def _verify_mqtt_credentials(self, username: str, password: str, timeout: int = 10):
         """
         Проверка MQTT логина/пароля через paho-mqtt.
-        Это разрешено, так как config_flow выполняется один раз и не создаёт постоянных потоков.
+        Полностью совместимо с paho-mqtt 2.x и HA 2026+.
         """
 
         result = {"success": False, "error": "auth_failed", "message": ""}
@@ -73,7 +73,8 @@ class WalleCubeConfigFlow(ConfigFlow, domain=DOMAIN):
 
         loop = asyncio.get_running_loop()
 
-        def on_connect(client, userdata, flags, rc):
+        # paho-mqtt 2.x: on_connect(client, userdata, flags, rc, properties)
+        def on_connect(client, userdata, flags, rc, properties=None):
             if rc == CONNACK_ACCEPTED:
                 result["success"] = True
                 result["error"] = None
@@ -84,7 +85,8 @@ class WalleCubeConfigFlow(ConfigFlow, domain=DOMAIN):
 
             loop.call_soon_threadsafe(event.set)
 
-        def on_disconnect(client, userdata, rc):
+        # paho-mqtt 2.x: on_disconnect(client, userdata, rc, properties, reason_code)
+        def on_disconnect(client, userdata, rc, properties=None, reason_code=None):
             if rc != 0:
                 result["error"] = f"error_code_{rc}"
                 result["message"] = f"Disconnected unexpectedly, code {rc}"
@@ -92,11 +94,11 @@ class WalleCubeConfigFlow(ConfigFlow, domain=DOMAIN):
 
         client_id = f"{username}_{int(time.time())}"
 
-        # ✔ paho-mqtt 2.0+ requires callback_api_version=5
+        # paho-mqtt 2.x requires callback_api_version=VERSION2
         client = MQTTClient(
-    client_id=client_id,
-    callback_api_version=CallbackAPIVersion.VERSION2,
-)
+            client_id=client_id,
+            callback_api_version=CallbackAPIVersion.VERSION2,
+        )
 
         client.username_pw_set(username, password)
         client.on_connect = on_connect
@@ -118,7 +120,10 @@ class WalleCubeConfigFlow(ConfigFlow, domain=DOMAIN):
             result["message"] = f"Unexpected error: {e}"
         finally:
             client.loop_stop()
-            client.disconnect()
+            try:
+                client.disconnect()
+            except Exception:
+                pass
 
         return result
 
