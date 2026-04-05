@@ -7,7 +7,11 @@ from homeassistant.config_entries import ConfigFlow, OptionsFlow
 from homeassistant.core import callback
 from homeassistant.const import CONF_DEVICE_ID, CONF_PASSWORD
 
-from paho.mqtt.client import Client as MQTTClient, CONNACK_ACCEPTED
+from paho.mqtt.client import (
+    Client as MQTTClient,
+    CONNACK_ACCEPTED,
+    CallbackAPIVersion,
+)
 
 from .const import DOMAIN, MQTT_BROKER, MQTT_PORT
 
@@ -90,9 +94,9 @@ class WalleCubeConfigFlow(ConfigFlow, domain=DOMAIN):
 
         # ✔ paho-mqtt 2.0+ requires callback_api_version=5
         client = MQTTClient(
-            client_id=client_id,
-            callback_api_version=5
-        )
+    client_id=client_id,
+    callback_api_version=CallbackAPIVersion.VERSION2,
+)
 
         client.username_pw_set(username, password)
         client.on_connect = on_connect
